@@ -5,12 +5,36 @@ import { createOrUpdate, deleteUserById, getUserById, readAllUsers, sendResponse
 const router = express.Router()
 
 // READ ALL Users
-router.get('/users', async (req, res) => {
+router.get('/usersdata', async (req, res) => {
     const { success, data } = await readAllUsers()
 
     if (success) {
         return res.json({ success, data })
     }
+    return res.status(500).json({ success: false, messsage: "Error" })
+})
+
+// READ ALL Users
+router.post('/users', async (req, res) => {
+    const { email,password} = req.body
+    console.log(email,password)
+    const adminObj = await getAdminById(email)
+    if(adminObj.success){
+        if (adminObj.data.password === password ) 
+        {
+            const { success, data } = await readAllUsers()
+            return res.json({ success, data })
+        }
+        else
+        {
+            return res.json({ success:true, data : null })
+        }
+    }else
+    {
+        return res.json({ success:true, data : null })
+
+    }
+   
     return res.status(500).json({ success: false, messsage: "Error" })
 })
 
